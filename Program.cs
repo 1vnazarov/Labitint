@@ -8,6 +8,9 @@ namespace Labitint {
             while (true) {
                 game.Draw();
                 game.Move(Console.ReadKey(true).Key);
+                if (game.CheckWin()) {
+                    game.GenerateNewLevel();
+                }
             }
         }
     }

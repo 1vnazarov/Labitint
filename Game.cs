@@ -9,12 +9,11 @@ namespace Labitint {
         private int playerX;
         private int playerY;
         private int score;
-
+        private int level = 0;
         Random rand = new Random();
         public Game(int width, int height) {
             map = new string[height, width];
-            GenerateMap();
-            PlacePlayer();
+            GenerateNewLevel();
         }
 
         public Game(string[,] customMap) {
@@ -91,7 +90,7 @@ namespace Labitint {
         public void Draw() {
             Console.Clear();
             Console.CursorVisible = false;
-
+            Console.WriteLine($"Level: {level}");
             for (int i = 0; i < map.GetLength(0); i++) {
                 for (int j = 0; j < map.GetLength(1); j++) {
                     switch (map[i, j]) {
@@ -114,6 +113,22 @@ namespace Labitint {
             }
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine($"Score: {score}");
+        }
+        public bool CheckWin() {
+            for (int i = 0; i < map.GetLength(0); i++) {
+                for (int j = 0; j < map.GetLength(1); j++) {
+                    if (map[i, j] == ScoreSymbol) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+        public void GenerateNewLevel() {
+            map = new string[map.GetLength(0), map.GetLength(1)];
+            GenerateMap();
+            PlacePlayer();
+            level++;
         }
     }
 }
