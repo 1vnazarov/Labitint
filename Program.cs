@@ -3,7 +3,7 @@
 namespace Labitint {
     internal class Program {
         static void Main() {
-            Game game = new Game(30, 20);
+            Game game = new Game(@"C:/Users/1995-21/desktop/map.txt");
 
             while (true) {
                 game.Draw();

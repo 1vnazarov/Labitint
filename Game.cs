@@ -1,24 +1,24 @@
 ﻿using System;
+using System.IO;
 
 namespace Labitint {
     public class Game {
-        private const string BrickSymbol = "■";
+        private const string BrickSymbol = "█";
         private const string PlayerSymbol = "@";
         private const string ScoreSymbol = "$";
         private string[,] map;
         private int playerX;
         private int playerY;
         private int score;
-        private int level = 0;
+        private int level;
         Random rand = new Random();
         public Game(int width, int height) {
             map = new string[height, width];
             GenerateNewLevel();
         }
 
-        public Game(string[,] customMap) {
-            map = customMap;
-            PlacePlayer();
+        public Game(string fileName) {
+            GenerateNewLevel(fileName);
         }
 
         private void GenerateMap() {
@@ -27,8 +27,6 @@ namespace Labitint {
                     map[i, j] = (i == 0 || i == map.GetLength(0) - 1 || j == 0 || j == map.GetLength(1) - 1) ? BrickSymbol : " ";
                 }
             }
-            PlaceObjects(ScoreSymbol, rand.Next(5, 10));
-            PlaceObjects(BrickSymbol, rand.Next(5));
         }
 
         private void PlaceObjects(string symbol, int count) {
@@ -88,8 +86,8 @@ namespace Labitint {
         }
 
         public void Draw() {
-            Console.Clear();
             Console.CursorVisible = false;
+            Console.SetCursorPosition(0, 0);
             Console.WriteLine($"Level: {level}");
             for (int i = 0; i < map.GetLength(0); i++) {
                 for (int j = 0; j < map.GetLength(1); j++) {
@@ -124,11 +122,41 @@ namespace Labitint {
             }
             return true;
         }
-        public void GenerateNewLevel() {
-            map = new string[map.GetLength(0), map.GetLength(1)];
-            GenerateMap();
-            PlacePlayer();
+        public void GenerateNewLevel(string fileName = null) {
             level++;
+            if (fileName == null)
+            {
+                GenerateMap();
+                PlacePlayer();
+                PlaceObjects(ScoreSymbol, rand.Next(5, 10));
+                PlaceObjects(BrickSymbol, rand.Next(5));
+            }
+            else LoadMap(fileName);
+        }
+
+        public void LoadMap(string fileName)
+        {
+            var lines = File.ReadAllLines(fileName);
+            map = new string[lines.Length, lines[0].Split(' ').Length];
+            for (int i = 0; i < lines.Length; i++)
+            {
+                var tmp = lines[i].Split(' ');
+                for (int j = 0; j < tmp.Length; j++)
+                {
+                    switch (Convert.ToInt32(tmp[j]))
+                    {
+                        case 0:
+                            map[i, j] = PlayerSymbol;
+                            break;
+                        case 1:
+                            map[i, j] = BrickSymbol;
+                            break;
+                        case 2:
+                            map[i, j] = ScoreSymbol;
+                            break;
+                    }
+                }
+            }
         }
     }
 }
